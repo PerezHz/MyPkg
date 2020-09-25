@@ -26,6 +26,8 @@ dx0T = similar(x0T)
     return nothing
 end
 
+# @taylorize_mypkg xdot2(x, p, t) = (local b2 = 3; b2-x^2)
+
 greet2() = TaylorIntegration.jetcoeffs!(Val(harm_osc!), tT, x0T, dx0T, ω)
 greet2(f) = TaylorIntegration._determine_parsing!(true, f, tT, x0T, dx0T, ω)
 
