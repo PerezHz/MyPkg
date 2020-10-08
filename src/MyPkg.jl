@@ -126,6 +126,47 @@ end
     nothing
 end
 
+ex1 = :(function f1!(dq, q, params, t)
+local N = Int(length(q)/2)
+local _eltype_q_ = eltype(q)
+local μ = params
+X = Array{_eltype_q_}(undef, N, N)
+accX = Array{_eltype_q_}(undef, N) #acceleration
+for j in 1:N
+    accX[j] = zero(q[1])
+    dq[j] = q[N+j]
+end
+#compute accelerations
+for j in 1:N
+    for i in 1:N
+        if i == j
+        else
+            X[i,j] = q[i]-q[j]
+            temp_001 = accX[j] + (μ[i]*X[i,j])
+            accX[j] = temp_001
+        end #if i != j
+    end #for, i
+end #for, j
+for i in 1:N
+    dq[N+i] = accX[i]
+end
+nothing
+end)
+
+ex2 = :(xdot1(x, p, t) = b1-x^2)
+
+ex3 = :(function harm_osc!(dx, x, p, t)
+    local ω = p[1]
+    local ω2 = ω^2
+    dx[1] = x[2]
+    dx[2] = - (ω2 * x[1])
+    return nothing
+end)
+
+nex1 = TaylorIntegration._make_parsed_jetcoeffs(ex1)
+nex2 = TaylorIntegration._make_parsed_jetcoeffs(ex2)
+nex3 = TaylorIntegration._make_parsed_jetcoeffs(ex3)
+
 @taylorize xdot1(x, p, t) = b1-x^2
 
 greet(f, parse_eqs) = begin
