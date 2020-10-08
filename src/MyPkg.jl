@@ -126,6 +126,8 @@ end
     nothing
 end
 
+@taylorize xdot1(x, p, t) = b1-x^2
+
 greet(f, parse_eqs) = begin
     t = Taylor1(order)
     x = Taylor1.(x0, t.order)
